@@ -38,7 +38,7 @@ class LinkedInJobTracker:
                     'keywords': f"{keyword} alternance",
                     'location': location,
                     'f_WT': '2',  # Filter for contract type (alternance)
-                    'f_TPR': 'r86400',  # Jobs posted in last 24 hours
+                    'f_TPR': 'r604800',  # Jobs posted in last 7 days
                     'start': '0'
                 }
                 
