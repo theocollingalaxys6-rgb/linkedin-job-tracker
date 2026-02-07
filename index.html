@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -96,6 +97,7 @@
         }
         .score-badge.high { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
         .score-badge.medium { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
+        .score-badge.low { background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%); }
         .verdict {
             font-size: 16px;
             color: #2d3748;
@@ -162,34 +164,18 @@
             margin-top: 30px;
             font-size: 14px;
         }
-        .empty-state {
-            background: white;
-            padding: 60px 30px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .empty-state h2 {
-            color: #2d3748;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        .empty-state p {
-            color: #718096;
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🎯 LinkedIn Job Tracker</h1>
-            <p>Dernière mise à jour : En attente du premier scan...</p>
+            <p>Dernière mise à jour : 07/02/2026 à 20:20</p>
         </div>
         
         <div class="stats">
             <div class="stat-card">
-                <h3>0</h3>
+                <h3>1</h3>
                 <p>Offres totales</p>
             </div>
             <div class="stat-card">
@@ -201,13 +187,7 @@
                 <p>Excellentes offres (≥8/10)</p>
             </div>
         </div>
-
-        <div class="empty-state">
-            <h2>🚀 Prêt à démarrer !</h2>
-            <p>Lancez le workflow dans l'onglet Actions de GitHub pour commencer à scanner les offres.</p>
-            <p style="margin-top: 10px;">Le premier scan prendra 2-3 minutes, puis le système tournera automatiquement 2x/jour.</p>
-        </div>
-        
+<p style='color: white; text-align: center; font-size: 18px;'>Aucune offre pertinente pour le moment. Le prochain scan aura lieu bientôt !</p>
         <div class="footer">
             <p>Développé avec ❤️ par Théo Collin | Propulsé par Gemini Pro AI</p>
         </div>
