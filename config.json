@@ -1,0 +1,38 @@
+{
+  "keywords": [
+    "operations",
+    "supply chain",
+    "project management",
+    "chef de projet",
+    "business operations",
+    "logistics"
+  ],
+  "locations": [
+    "Paris, Île-de-France, France",
+    "Lille, Hauts-de-France, France",
+    "France"
+  ],
+  "preferences": {
+    "company_type": {
+      "preferred": ["startup", "scale-up", "tech"],
+      "acceptable": ["grand groupe", "PME"]
+    },
+    "remote": "plus",
+    "contract_type": "alternance",
+    "skills_match": [
+      "data analysis",
+      "SQL",
+      "automation",
+      "process optimization",
+      "supply chain",
+      "operations"
+    ]
+  },
+  "red_flags": [
+    "stage non rémunéré",
+    "bénévolat",
+    "mission floue",
+    "trop de responsabilités",
+    "expérience 5+ ans"
+  ]
+}

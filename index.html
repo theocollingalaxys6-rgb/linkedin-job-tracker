@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Job Tracker - Théo Collin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #718096;
+            font-size: 14px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .stat-card p {
+            color: #718096;
+            font-size: 14px;
+        }
+        .job-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        .job-title {
+            font-size: 20px;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .job-company {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .job-location {
+            color: #718096;
+            font-size: 14px;
+        }
+        .score-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .score-badge.high { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+        .score-badge.medium { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
+        .verdict {
+            font-size: 16px;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        .points {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .points-section {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .points-section h4 {
+            font-size: 14px;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .points-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .points-section li {
+            padding: 5px 0;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        .points-section li:before {
+            content: "• ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .recommendation {
+            background: #edf2f7;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .job-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .job-link:hover {
+            background: #5568d3;
+        }
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+        .empty-state {
+            background: white;
+            padding: 60px 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .empty-state h2 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            color: #718096;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 LinkedIn Job Tracker</h1>
+            <p>Dernière mise à jour : En attente du premier scan...</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>0</h3>
+                <p>Offres totales</p>
+            </div>
+            <div class="stat-card">
+                <h3>0</h3>
+                <p>Offres pertinentes (≥7/10)</p>
+            </div>
+            <div class="stat-card">
+                <h3>0</h3>
+                <p>Excellentes offres (≥8/10)</p>
+            </div>
+        </div>
+
+        <div class="empty-state">
+            <h2>🚀 Prêt à démarrer !</h2>
+            <p>Lancez le workflow dans l'onglet Actions de GitHub pour commencer à scanner les offres.</p>
+            <p style="margin-top: 10px;">Le premier scan prendra 2-3 minutes, puis le système tournera automatiquement 2x/jour.</p>
+        </div>
+        
+        <div class="footer">
+            <p>Développé avec ❤️ par Théo Collin | Propulsé par Gemini Pro AI</p>
+        </div>
+    </div>
+</body>
+</html>
