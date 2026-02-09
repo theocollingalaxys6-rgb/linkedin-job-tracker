@@ -1,10 +1,17 @@
 {
   "keywords": [
-    "alternance"
+    "alternance",
+    "apprentissage",
+    "Master",
+    "Bac+5",
+    "stage longue durée"
   ],
   "locations": [
     "Paris, Île-de-France, France",
-    "Lille, Hauts-de-France, France"
+    "Lille, Hauts-de-France, France",
+    "Lyon, Auvergne-Rhône-Alpes, France",
+    "Bordeaux, Nouvelle-Aquitaine, France",
+    "France"
   ],
   "preferences": {
     "company_type": {
@@ -19,14 +26,14 @@
       "automation",
       "process optimization",
       "supply chain",
-      "operations"
+      "operations",
+      "business",
+      "management",
+      "consulting"
     ]
   },
   "red_flags": [
     "stage non rémunéré",
-    "bénévolat",
-    "mission floue",
-    "trop de responsabilités",
-    "expérience 5+ ans"
+    "bénévolat"
   ]
 }
