@@ -297,7 +297,7 @@ RETOURNE UNIQUEMENT un JSON avec ce format exact :
         jobs_list.sort(key=lambda x: x.get('analysis', {}).get('score', 0), reverse=True)
         
         # Get top jobs (score >= 7)
-        top_jobs = [j for j in jobs_list if j.get('analysis', {}).get('score', 0) >= 7]
+        top_jobs = jobs_list  # Afficher toutes les offres
         
         html = f"""
 <!DOCTYPE html>
