@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkedIn Job Tracker - Théo Collin</title>
+    <title>Multi-Source Job Tracker - Théo Collin</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,10 +13,7 @@
             padding: 20px;
             min-height: 100vh;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
         .header {
             background: white;
             padding: 30px;
@@ -24,18 +21,11 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .header h1 {
-            color: #2d3748;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        .header p {
-            color: #718096;
-            font-size: 14px;
-        }
+        .header h1 { color: #2d3748; font-size: 28px; margin-bottom: 10px; }
+        .header p { color: #718096; font-size: 14px; }
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -45,15 +35,8 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .stat-card h3 {
-            font-size: 32px;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-        .stat-card p {
-            color: #718096;
-            font-size: 14px;
-        }
+        .stat-card h3 { font-size: 32px; color: #667eea; margin-bottom: 5px; }
+        .stat-card p { color: #718096; font-size: 14px; }
         .job-card {
             background: white;
             padding: 25px;
@@ -62,30 +45,19 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
-        .job-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-        .job-title {
-            font-size: 20px;
-            color: #2d3748;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .job-company {
-            color: #667eea;
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-        .job-location {
-            color: #718096;
-            font-size: 14px;
+        .job-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .job-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        .job-title { font-size: 20px; color: #2d3748; font-weight: 600; margin-bottom: 5px; }
+        .job-company { color: #667eea; font-size: 16px; margin-bottom: 5px; }
+        .job-location { color: #718096; font-size: 14px; }
+        .source-badge {
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 5px;
+            display: inline-block;
         }
         .score-badge {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -98,53 +70,14 @@
         .score-badge.high { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
         .score-badge.medium { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
         .score-badge.low { background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%); }
-        .verdict {
-            font-size: 16px;
-            color: #2d3748;
-            font-weight: 500;
-            margin-bottom: 15px;
-        }
-        .points {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        .points-section {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .points-section h4 {
-            font-size: 14px;
-            color: #2d3748;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .points-section ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .points-section li {
-            padding: 5px 0;
-            color: #4a5568;
-            font-size: 14px;
-        }
-        .points-section li:before {
-            content: "• ";
-            color: #667eea;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        .recommendation {
-            background: #edf2f7;
-            padding: 12px 16px;
-            border-radius: 8px;
-            color: #2d3748;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
+        .verdict { font-size: 16px; color: #2d3748; font-weight: 500; margin-bottom: 15px; }
+        .points { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .points-section { background: #f7fafc; padding: 15px; border-radius: 8px; }
+        .points-section h4 { font-size: 14px; color: #2d3748; margin-bottom: 10px; text-transform: uppercase; }
+        .points-section ul { list-style: none; padding-left: 0; }
+        .points-section li { padding: 5px 0; color: #4a5568; font-size: 14px; }
+        .points-section li:before { content: "• "; color: #667eea; font-weight: bold; margin-right: 5px; }
+        .recommendation { background: #edf2f7; padding: 12px 16px; border-radius: 8px; color: #2d3748; font-size: 14px; margin-bottom: 15px; }
         .job-link {
             display: inline-block;
             background: #667eea;
@@ -155,45 +88,56 @@
             font-weight: 500;
             transition: background 0.2s;
         }
-        .job-link:hover {
-            background: #5568d3;
-        }
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 30px;
-            font-size: 14px;
-        }
+        .job-link:hover { background: #5568d3; }
+        .footer { text-align: center; color: white; margin-top: 30px; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 LinkedIn Job Tracker</h1>
-            <p>Dernière mise à jour : 10/02/2026 à 10:15</p>
+            <h1>🎯 Multi-Source Job Tracker</h1>
+            <p>Sources : LinkedIn Jobs, Welcome to the Jungle, Indeed, LinkedIn Posts</p>
+            <p>Dernière mise à jour : 10/02/2026 à 17:39</p>
         </div>
         
         <div class="stats">
             <div class="stat-card">
-                <h3>22</h3>
+                <h3>50</h3>
                 <p>Offres totales</p>
             </div>
             <div class="stat-card">
-                <h3>22</h3>
-                <p>Offres pertinentes (≥7/10)</p>
+                <h3>0</h3>
+                <p>Score ≥7/10</p>
             </div>
             <div class="stat-card">
                 <h3>0</h3>
-                <p>Excellentes offres (≥8/10)</p>
+                <p>Score ≥8/10</p>
+            </div>
+            <div class="stat-card">
+                <h3>50</h3>
+                <p>LinkedIn Jobs</p>
+            </div>
+            <div class="stat-card">
+                <h3>0</h3>
+                <p>WTTJ</p>
+            </div>
+            <div class="stat-card">
+                <h3>0</h3>
+                <p>Indeed</p>
+            </div>
+            <div class="stat-card">
+                <h3>0</h3>
+                <p>Posts LinkedIn</p>
             </div>
         </div>
-<h2 style='color: white; margin: 20px 0;'>🌟 Top Opportunités</h2>
+<h2 style='color: white; margin: 20px 0;'>🌟 Toutes les opportunités</h2>
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Alternance - Consultant(e) en transformation digitale – Customer & Value</div>
-                    <div class="job-company">Sopra Steria Next</div>
+                    <div class="job-title">Stage - Product Marketing /  Marketing Produit  - SBS - Paris</div>
+                    <div class="job-company">SBS</div>
                     <div class="job-location">📍 Courbevoie, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -219,7 +163,112 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternance-consultant-e-en-transformation-digitale-%E2%80%93-customer-value-at-sopra-steria-next-4362503813?position=1&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=SsmjNt1Uj1amShox%2BKSE0g%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/stage-product-marketing-marketing-produit-sbs-paris-at-sbs-4365957616?position=1&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=xd6tCN3ghpVmx3PM%2FQnpUA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Paris, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4360999202?position=2&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=g%2BdtmUyWDWdc7%2FrODUJlWg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Data Engineer F/H - Alternance</div>
+                    <div class="job-company">SOCOTEC</div>
+                    <div class="job-location">📍 Palaiseau, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/data-engineer-f-h-alternance-at-socotec-4226983639?position=3&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=XzOTiZXvq0vjf4evzsqGcA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance - Consultant(e) en transformation digitale – Customer & Value</div>
+                    <div class="job-company">Sopra Steria Next</div>
+                    <div class="job-location">📍 Courbevoie, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-consultant-e-en-transformation-digitale-%E2%80%93-customer-value-at-sopra-steria-next-4362503813?position=4&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=1oQbgrSUxXkShImEGzGHcg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -228,6 +277,7 @@
                     <div class="job-title">Data Engineer BI - Alternance</div>
                     <div class="job-company">Boursorama</div>
                     <div class="job-location">📍 Boulogne-Billancourt, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -253,109 +303,7 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/data-engineer-bi-alternance-at-boursorama-4269646497?position=2&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=zAPY%2B9HNiszHiwzeThS%2FAw%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
-        </div>
-
-        <div class="job-card">
-            <div class="job-header">
-                <div>
-                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
-                    <div class="job-company">PerspectivIA</div>
-                    <div class="job-location">📍 Paris, Île-de-France, France</div>
-                </div>
-                <div class="score-badge low">0/10</div>
-            </div>
-            
-            <div class="verdict">💡 Erreur d'analyse</div>
-            
-            <div class="points">
-                <div class="points-section">
-                    <h4>✅ Points forts</h4>
-                    <ul>
-
-                    </ul>
-                </div>
-                <div class="points-section">
-                    <h4>⚠️ Points faibles</h4>
-                    <ul>
-<li>Erreur lors de l'analyse IA</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="recommendation">
-                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
-            </div>
-            
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4369536223?position=3&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=UNZiioQzgvoqYtM18jwFtQ%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
-        </div>
-
-        <div class="job-card">
-            <div class="job-header">
-                <div>
-                    <div class="job-title">CONTRÔLEUR DE GESTION JUNIOR (H/F) H/F</div>
-                    <div class="job-company">BYmyCAR</div>
-                    <div class="job-location">📍 Boulogne-Billancourt, Île-de-France, France</div>
-                </div>
-                <div class="score-badge low">0/10</div>
-            </div>
-            
-            <div class="verdict">💡 Erreur d'analyse</div>
-            
-            <div class="points">
-                <div class="points-section">
-                    <h4>✅ Points forts</h4>
-                    <ul>
-
-                    </ul>
-                </div>
-                <div class="points-section">
-                    <h4>⚠️ Points faibles</h4>
-                    <ul>
-<li>Erreur lors de l'analyse IA</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="recommendation">
-                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
-            </div>
-            
-            <a href="https://fr.linkedin.com/jobs/view/contr%C3%B4leur-de-gestion-junior-h-f-h-f-at-bymycar-4369472533?position=4&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=EINQMzNRIQH3QOIgt20yMA%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
-        </div>
-
-        <div class="job-card">
-            <div class="job-header">
-                <div>
-                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
-                    <div class="job-company">PerspectivIA</div>
-                    <div class="job-location">📍 Épinay-sur-Seine, Île-de-France, France</div>
-                </div>
-                <div class="score-badge low">0/10</div>
-            </div>
-            
-            <div class="verdict">💡 Erreur d'analyse</div>
-            
-            <div class="points">
-                <div class="points-section">
-                    <h4>✅ Points forts</h4>
-                    <ul>
-
-                    </ul>
-                </div>
-                <div class="points-section">
-                    <h4>⚠️ Points faibles</h4>
-                    <ul>
-<li>Erreur lors de l'analyse IA</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="recommendation">
-                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
-            </div>
-            
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4369356763?position=5&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=PBhvDwptPlX7dwKyznmBzg%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/data-engineer-bi-alternance-at-boursorama-4269646497?position=5&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=z9Tvc3OC1LAy7BBED6hy7w%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -364,6 +312,7 @@
                     <div class="job-title">Stage - Chef/fe de Projet - Services Publics - Ile de France</div>
                     <div class="job-company">Sopra Steria</div>
                     <div class="job-location">📍 Courbevoie, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -389,15 +338,16 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/stage-chef-fe-de-projet-services-publics-ile-de-france-at-sopra-steria-4368296318?position=6&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=NDOXB%2Fa5VNC8emDZxpb%2FSw%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/stage-chef-fe-de-projet-services-publics-ile-de-france-at-sopra-steria-4370640846?position=6&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=lW1zyLCzvFGYFteEFrsw1g%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Stage Social Media Manager Bilingue FR/EN</div>
-                    <div class="job-company">BiblioScan</div>
+                    <div class="job-title">Chargé Pôle Relations Entreprises F/H</div>
+                    <div class="job-company">Collège des Talents</div>
                     <div class="job-location">📍 Paris, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -423,15 +373,16 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/stage-social-media-manager-bilingue-fr-en-at-biblioscan-4370875654?position=7&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=xbQPpM8Lh9yay0wsIpMu1A%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/charg%C3%A9-p%C3%B4le-relations-entreprises-f-h-at-coll%C3%A8ge-des-talents-4359215175?position=7&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=9oWLI2qo3IVjIhOjeo0LqA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Agent immobilier indépendant - H/F</div>
-                    <div class="job-company">Liberkeys</div>
-                    <div class="job-location">📍 Île-de-France, France</div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Paris, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -457,7 +408,427 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/agent-immobilier-ind%C3%A9pendant-h-f-at-liberkeys-4361778640?position=8&pageNum=0&refId=a2tht3M8xxIvGv5oAlN7qA%3D%3D&trackingId=oiwIF9oNXT1xm2PgSXXa6w%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4369536223?position=8&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=%2FuxAKyktYyOaukIhXO3uBA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Paris, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4359153105?position=9&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=dPhD8taZXDFRD3PxBInS4Q%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">CONTRÔLEUR DE GESTION JUNIOR (H/F) H/F</div>
+                    <div class="job-company">BYmyCAR</div>
+                    <div class="job-location">📍 Boulogne-Billancourt, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/contr%C3%B4leur-de-gestion-junior-h-f-h-f-at-bymycar-4369472533?position=10&pageNum=0&refId=aebHRivxCXv9lf8UkHNnPA%3D%3D&trackingId=hMUaBdiE4BQ0p0khfGmcGA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">ALTERNANCE PRODUCT OWNER (1 AN)</div>
+                    <div class="job-company">STATION F</div>
+                    <div class="job-location">📍 Paris, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-product-owner-1-an-at-station-f-4359277184?position=1&pageNum=0&refId=BiDz4NSWmhZB1vW%2B7ADF8Q%3D%3D&trackingId=ulpo8xkr2krQsmMR5ZQHrA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">People Success Apprentice</div>
+                    <div class="job-company">OpenClassrooms</div>
+                    <div class="job-location">📍 Paris, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/people-success-apprentice-at-openclassrooms-4367170752?position=2&pageNum=0&refId=BiDz4NSWmhZB1vW%2B7ADF8Q%3D%3D&trackingId=E8oofu%2BPn4XlWhxwdD7zJQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Stage - China Coverage Support - H/F</div>
+                    <div class="job-company">BNP Paribas</div>
+                    <div class="job-location">📍 Levallois-Perret, Île-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/stage-china-coverage-support-h-f-at-bnp-paribas-4371019762?position=3&pageNum=0&refId=LIP6wc2KORQ9C36TRLIV6A%3D%3D&trackingId=XqvTekDk5GQSqJzF4W86QQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Seclin, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4360062386?position=1&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=q0NVrTdrodM621axkkIfrQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Stage Développeuse / Développeur Back end</div>
+                    <div class="job-company">Capgemini</div>
+                    <div class="job-location">📍 Lille, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/stage-d%C3%A9veloppeuse-d%C3%A9veloppeur-back-end-at-capgemini-4364290874?position=2&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=UNfl%2FTjhXCgFsfI4odReSg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance - Gestionnaire des Ressources Humaines H/F</div>
+                    <div class="job-company">Enaco</div>
+                    <div class="job-location">📍 Lille, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-gestionnaire-des-ressources-humaines-h-f-at-enaco-4321439533?position=3&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=IB2Mj4DR4mQoE3JTzzGmcg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Seclin, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4368205509?position=4&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=PK2Q%2BQ5AyfGx%2BP5%2BMLKlVQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Apporteur d’affaires – Formation Tertiaire</div>
+                    <div class="job-company">Icademie International</div>
+                    <div class="job-location">📍 Nord, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/apporteur-d%E2%80%99affaires-%E2%80%93-formation-tertiaire-at-icademie-international-4368188167?position=5&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=ZLoIzZX0RPDJuWamLOircg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Lille, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4368205466?position=6&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=vD2tLqylkEL3ol5ERchOPQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Stage-formation : Expert en ingénierie QA & tests logiciels automatisés (F/H).</div>
+                    <div class="job-company">Fédération pour l'Entrepreneuriat Durable</div>
+                    <div class="job-location">📍 Lille, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/stage-formation-expert-en-ing%C3%A9nierie-qa-tests-logiciels-automatis%C3%A9s-f-h-at-f%C3%A9d%C3%A9ration-pour-l-entrepreneuriat-durable-4365528014?position=7&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=Uw35opgDN%2BgyTAuMXB2iJQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -466,6 +837,7 @@
                     <div class="job-title">Commercial terrain</div>
                     <div class="job-company">Ma santé facile</div>
                     <div class="job-location">📍 Greater Lille Metropolitan Area</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -491,7 +863,287 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/commercial-terrain-at-ma-sant%C3%A9-facile-4367165797?position=1&pageNum=0&refId=YXkrpUCOlfhUT4LGRTy6Eg%3D%3D&trackingId=TCjjU6jMOgRNDCIdf0L1%2Bw%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/commercial-terrain-at-ma-sant%C3%A9-facile-4367165797?position=8&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=afxRk%2BndrrYNPiDXZRtwlA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Apprenti(e) Assistant HSE</div>
+                    <div class="job-company">O-I</div>
+                    <div class="job-location">📍 Wingles, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/apprenti-e-assistant-hse-at-o-i-3806185666?position=9&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=JWPDCrVaY4RxP9Ox%2BTLPKw%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Bénévolat : Mentorez un jeune en ligne et aidez-le à naviguer dans son parcours professionnel !</div>
+                    <div class="job-company">Tous Bénévoles</div>
+                    <div class="job-location">📍 Lille, Hauts-de-France, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/b%C3%A9n%C3%A9volat-mentorez-un-jeune-en-ligne-et-aidez-le-%C3%A0-naviguer-dans-son-parcours-professionnel-%21-at-tous-b%C3%A9n%C3%A9voles-4267732522?position=10&pageNum=0&refId=sKWcwlRJGaAtVmkL%2FBtEYg%3D%3D&trackingId=FFwEPQqJ8X2RS8XvD9rOBg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Caluire-et-Cuire, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4359212730?position=1&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=FQljZHVFgsvZRhS3%2By%2BigA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Vénissieux, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4360032302?position=2&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=b76vlT9uNvlZTTn1xgpViw%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Lyon, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4368200569?position=3&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=d5fzWJYQ92CrWMG72dNTeA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Consultant(e) fonctionnel GMAO</div>
+                    <div class="job-company">SQLI</div>
+                    <div class="job-location">📍 Lyon, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/consultant-e-fonctionnel-gmao-at-sqli-4339266090?position=4&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=cokUeokxTvw0%2Fl6uU1xRRA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Stagiaire Energy Manager - Projet de fin d'études H/F</div>
+                    <div class="job-company">BYmyCAR</div>
+                    <div class="job-location">📍 Vénissieux, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/stagiaire-energy-manager-projet-de-fin-d-%C3%A9tudes-h-f-at-bymycar-4366713592?position=5&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=gif%2BETRNOKlLsKkecgg%2B6Q%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance - Etudes et Pilotage Technique</div>
+                    <div class="job-company">Groupama Rhone-Alpes Auvergne</div>
+                    <div class="job-location">📍 Lyon, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-etudes-et-pilotage-technique-at-groupama-rhone-alpes-auvergne-4339117819?position=6&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=kLy5Uwq2x58HcJAqmILEbg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -500,6 +1152,7 @@
                     <div class="job-title">Agent immobilier indépendant - H/F</div>
                     <div class="job-company">Liberkeys</div>
                     <div class="job-location">📍 Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -525,7 +1178,7 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/agent-immobilier-ind%C3%A9pendant-h-f-at-liberkeys-4361805926?position=1&pageNum=0&refId=ICPlTJeZ4fWa4hXTIrUx7w%3D%3D&trackingId=J8O9IMEGsSMvDglC9aWc9w%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/agent-immobilier-ind%C3%A9pendant-h-f-at-liberkeys-4361805926?position=7&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=M6y8gogiOcXEhsrmXnu7VQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -534,6 +1187,7 @@
                     <div class="job-title">Agent immobilier indépendant - H/F</div>
                     <div class="job-company">Liberkeys</div>
                     <div class="job-location">📍 Greater Lyon Area</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -559,7 +1213,77 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/agent-immobilier-ind%C3%A9pendant-h-f-at-liberkeys-4361805910?position=2&pageNum=0&refId=ICPlTJeZ4fWa4hXTIrUx7w%3D%3D&trackingId=Z06T0nGSXHmfr7XFquuZPQ%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/agent-immobilier-ind%C3%A9pendant-h-f-at-liberkeys-4361805910?position=8&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=8v9l4kvjCKEysmLnl0EKRg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Auxiliaire de vie en alternance</div>
+                    <div class="job-company">DESTIA</div>
+                    <div class="job-location">📍 Villeurbanne, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/auxiliaire-de-vie-en-alternance-at-destia-4366344037?position=9&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=G5sDGH8N2VtoFzKJ8BIDGA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Auxiliaire de vie en alternance</div>
+                    <div class="job-company">DESTIA</div>
+                    <div class="job-location">📍 Caluire-et-Cuire, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/auxiliaire-de-vie-en-alternance-at-destia-4368196285?position=10&pageNum=0&refId=czUK8Nczq%2FCE9%2FPynTkOYg%3D%3D&trackingId=XATPtfg699YkJNvluwjhfg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -568,6 +1292,7 @@
                     <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
                     <div class="job-company">PerspectivIA</div>
                     <div class="job-location">📍 Bordeaux, Nouvelle-Aquitaine, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -593,7 +1318,42 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4369535343?position=1&pageNum=0&refId=%2FHkiMQqSvOV%2Bxp1wOJz9oA%3D%3D&trackingId=LXSBQGcCelNHlK%2FABpoEWA%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4369535343?position=1&pageNum=0&refId=dlZM8ISTh38q%2BD%2Fu49HJng%3D%3D&trackingId=ftiUsfl1I67wsVGvLBvqCA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
+                    <div class="job-company">PerspectivIA</div>
+                    <div class="job-location">📍 Villenave-d’Ornon, Nouvelle-Aquitaine, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4354764879?position=2&pageNum=0&refId=dlZM8ISTh38q%2BD%2Fu49HJng%3D%3D&trackingId=vSRkow%2FOV5xzVLzE0TsXtw%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -602,6 +1362,7 @@
                     <div class="job-title">Agent immobilier indépendant - H/F</div>
                     <div class="job-company">Liberkeys</div>
                     <div class="job-location">📍 Greater Bordeaux Metropolitan Area</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -627,7 +1388,112 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/agent-immobilier-ind%C3%A9pendant-h-f-at-liberkeys-4362260114?position=2&pageNum=0&refId=%2FHkiMQqSvOV%2Bxp1wOJz9oA%3D%3D&trackingId=TqOfRAOd6Wa4sdkjGaxxyA%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/agent-immobilier-ind%C3%A9pendant-h-f-at-liberkeys-4362260114?position=3&pageNum=0&refId=dlZM8ISTh38q%2BD%2Fu49HJng%3D%3D&trackingId=sVuiGgWDowNgnPgieltPgg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Technico-Commercial·e – Microbiologie (H/F)</div>
+                    <div class="job-company">UPTOO</div>
+                    <div class="job-location">📍 Bordeaux, Nouvelle-Aquitaine, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/technico-commercial%C2%B7e-%E2%80%93-microbiologie-h-f-at-uptoo-4324447183?position=4&pageNum=0&refId=dlZM8ISTh38q%2BD%2Fu49HJng%3D%3D&trackingId=GcpR%2FSbV0wNgDSFMbYoMVA%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Bénévolat : Mentorez un jeune en ligne et aidez-le à naviguer dans son parcours professionnel !</div>
+                    <div class="job-company">Tous Bénévoles</div>
+                    <div class="job-location">📍 Bordeaux, Nouvelle-Aquitaine, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/b%C3%A9n%C3%A9volat-mentorez-un-jeune-en-ligne-et-aidez-le-%C3%A0-naviguer-dans-son-parcours-professionnel-%21-at-tous-b%C3%A9n%C3%A9voles-4267728748?position=5&pageNum=0&refId=dlZM8ISTh38q%2BD%2Fu49HJng%3D%3D&trackingId=%2FS58ZaCyiZ9ekulNwoctsw%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Consultant(e) - Transformation Digitale - Nantes</div>
+                    <div class="job-company">Sopra Steria Next</div>
+                    <div class="job-location">📍 Saint-Herblain, Pays de la Loire, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/consultant-e-transformation-digitale-nantes-at-sopra-steria-next-4366573225?position=3&pageNum=0&refId=1QCm4kPoBrUm2XC8hU4P7w%3D%3D&trackingId=S2%2FwQv6BJa4Ddkq6Ir8G%2Bg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -636,6 +1502,7 @@
                     <div class="job-title">Alternant Marketing (H/F)</div>
                     <div class="job-company">HARTMANN GROUP</div>
                     <div class="job-location">📍 Châtenois, Grand Est, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -661,7 +1528,112 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternant-marketing-h-f-at-hartmann-group-4370215890?position=2&pageNum=0&refId=AzdTKqfwIVJG6bLiXLfFdQ%3D%3D&trackingId=OOEcGirsGyME2p5LogoX1A%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/alternant-marketing-h-f-at-hartmann-group-4370215890?position=5&pageNum=0&refId=1QCm4kPoBrUm2XC8hU4P7w%3D%3D&trackingId=zL8dAvrsmzcUscn6hviFDQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Business analyst odoo</div>
+                    <div class="job-company">Ooneur</div>
+                    <div class="job-location">📍 France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/business-analyst-odoo-at-ooneur-4367759558?position=6&pageNum=0&refId=1QCm4kPoBrUm2XC8hU4P7w%3D%3D&trackingId=SNW1axzlkQeq8N8jmWAGxQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Contrôleur de Gestion Opérationnel Projets</div>
+                    <div class="job-company">Scalian</div>
+                    <div class="job-location">📍 Saint-Paul-lez-Durance, Provence-Alpes-Côte d'Azur, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/contr%C3%B4leur-de-gestion-op%C3%A9rationnel-projets-at-scalian-4334564108?position=7&pageNum=0&refId=1QCm4kPoBrUm2XC8hU4P7w%3D%3D&trackingId=lm1PX0EQ0ZP8E9%2BVNxtC6A%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Sales Development Representative (Alternance)</div>
+                    <div class="job-company">Vizualee</div>
+                    <div class="job-location">📍 France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/sales-development-representative-alternance-at-vizualee-4352541653?position=9&pageNum=0&refId=1QCm4kPoBrUm2XC8hU4P7w%3D%3D&trackingId=UG7WTnmO61L8nllhaqb80A%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
@@ -670,6 +1642,7 @@
                     <div class="job-title">(Stage) Assistant·e Marketing Digital</div>
                     <div class="job-company">Lofi Girl</div>
                     <div class="job-location">📍 France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -695,15 +1668,16 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/stage-assistant%C2%B7e-marketing-digital-at-lofi-girl-4369780040?position=4&pageNum=0&refId=AzdTKqfwIVJG6bLiXLfFdQ%3D%3D&trackingId=yz50QNLiP9ZEd2%2BPicKkhQ%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/stage-assistant%C2%B7e-marketing-digital-at-lofi-girl-4369780040?position=10&pageNum=0&refId=1QCm4kPoBrUm2XC8hU4P7w%3D%3D&trackingId=EIKVZgSLAsQmjGmqQK94tQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
-                    <div class="job-company">PerspectivIA</div>
-                    <div class="job-location">📍 Antibes, Provence-Alpes-Côte d'Azur, France</div>
+                    <div class="job-title">Tuteur / Formateur - Titre professionnel Gestionnaire de paie H/F</div>
+                    <div class="job-company">H3 Campus</div>
+                    <div class="job-location">📍 Montpellier, Occitanie, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -729,15 +1703,16 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4369535349?position=6&pageNum=0&refId=AzdTKqfwIVJG6bLiXLfFdQ%3D%3D&trackingId=GyoizgjwlxOgt8dol36HgQ%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/tuteur-formateur-titre-professionnel-gestionnaire-de-paie-h-f-at-h3-campus-4359590510?position=3&pageNum=0&refId=818yal9cRZvHa7vhenrDeg%3D%3D&trackingId=%2Bf6qphb8MOFWv7pS7G72GQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
-                    <div class="job-company">ISIM</div>
-                    <div class="job-location">📍 Saint-Laurent-du-Var, Provence-Alpes-Côte d'Azur, France</div>
+                    <div class="job-title">Alternance – CSM (H/F) – Saas Rénovation – 100% télétravail</div>
+                    <div class="job-company">Visuary</div>
+                    <div class="job-location">📍 France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -763,15 +1738,16 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-isim-4369342997?position=7&pageNum=0&refId=AzdTKqfwIVJG6bLiXLfFdQ%3D%3D&trackingId=uq%2BeJdFuuN%2FviwMXmBMYEA%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/alternance-%E2%80%93-csm-h-f-%E2%80%93-saas-r%C3%A9novation-%E2%80%93-100%25-t%C3%A9l%C3%A9travail-at-visuary-4366319974?position=3&pageNum=0&refId=Nw8rwFLvx1ptjTVra88IBg%3D%3D&trackingId=silWLZAbvBXG8KYPmgJoIw%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
-                    <div class="job-company">ISIM</div>
-                    <div class="job-location">📍 Lantosque, Provence-Alpes-Côte d'Azur, France</div>
+                    <div class="job-title">ALTERNANT - Assistant conducteur de travaux VRD H/F</div>
+                    <div class="job-company">Spie batignolles</div>
+                    <div class="job-location">📍 Albi, Occitanie, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -797,15 +1773,16 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-isim-4369389718?position=8&pageNum=0&refId=AzdTKqfwIVJG6bLiXLfFdQ%3D%3D&trackingId=Jt1%2BBXEdChXEB7qfkgDKzQ%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/alternant-assistant-conducteur-de-travaux-vrd-h-f-at-spie-batignolles-4357422151?position=5&pageNum=0&refId=Nw8rwFLvx1ptjTVra88IBg%3D%3D&trackingId=exrvEPQz1epo%2FwHjWfbeQw%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
-                    <div class="job-company">ISIM</div>
-                    <div class="job-location">📍 Mandelieu-la-Napoule, Provence-Alpes-Côte d'Azur, France</div>
+                    <div class="job-title">Chargé(e) de Communication H/F – Alternance</div>
+                    <div class="job-company">SUEZ</div>
+                    <div class="job-location">📍 France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -831,15 +1808,16 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-isim-4369510259?position=9&pageNum=0&refId=AzdTKqfwIVJG6bLiXLfFdQ%3D%3D&trackingId=IEiUCKogpfLUT9F9%2FJlYzg%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/charg%C3%A9-e-de-communication-h-f-%E2%80%93-alternance-at-suez-4356184371?position=6&pageNum=0&refId=Nw8rwFLvx1ptjTVra88IBg%3D%3D&trackingId=KbFlBetScYBGiBD7SrNafg%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="job-card">
             <div class="job-header">
                 <div>
-                    <div class="job-title">Alternance Employé(e) commercial(e) H/F</div>
-                    <div class="job-company">PerspectivIA</div>
-                    <div class="job-location">📍 Cassis, Provence-Alpes-Côte d'Azur, France</div>
+                    <div class="job-title">Ingénieur Contrôleur de Coûts Nucléaire</div>
+                    <div class="job-company">Scalian</div>
+                    <div class="job-location">📍 Pierrelatte, Auvergne-Rhône-Alpes, France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
                 </div>
                 <div class="score-badge low">0/10</div>
             </div>
@@ -865,11 +1843,46 @@
                 🎯 <strong>Recommandation :</strong> Analyse manuelle requise
             </div>
             
-            <a href="https://fr.linkedin.com/jobs/view/alternance-employ%C3%A9-e-commercial-e-h-f-at-perspectivia-4369399036?position=10&pageNum=0&refId=AzdTKqfwIVJG6bLiXLfFdQ%3D%3D&trackingId=txuk%2FzYdYA7s94a3OPOfnA%3D%3D" class="job-link" target="_blank">Voir l'offre sur LinkedIn →</a>
+            <a href="https://fr.linkedin.com/jobs/view/ing%C3%A9nieur-contr%C3%B4leur-de-co%C3%BBts-nucl%C3%A9aire-at-scalian-4334544234?position=7&pageNum=0&refId=Nw8rwFLvx1ptjTVra88IBg%3D%3D&trackingId=2nJcks1cb2aQpkHmIyuy7Q%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
+        </div>
+
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">CHARGÉ DE CONFORMITÉ LCB-FT (H/F)</div>
+                    <div class="job-company">Edmond de Rothschild</div>
+                    <div class="job-location">📍 France</div>
+                    <span class="source-badge">🔗 LinkedIn Jobs</span>
+                </div>
+                <div class="score-badge low">0/10</div>
+            </div>
+            
+            <div class="verdict">💡 Erreur d'analyse</div>
+            
+            <div class="points">
+                <div class="points-section">
+                    <h4>✅ Points forts</h4>
+                    <ul>
+
+                    </ul>
+                </div>
+                <div class="points-section">
+                    <h4>⚠️ Points faibles</h4>
+                    <ul>
+<li>Erreur lors de l'analyse IA</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="recommendation">
+                🎯 <strong>Recommandation :</strong> Analyse manuelle requise
+            </div>
+            
+            <a href="https://fr.linkedin.com/jobs/view/charg%C3%A9-de-conformit%C3%A9-lcb-ft-h-f-at-edmond-de-rothschild-4345748224?position=10&pageNum=0&refId=Nw8rwFLvx1ptjTVra88IBg%3D%3D&trackingId=d2NeLMs2g%2FfEgyrsD0yrgQ%3D%3D" class="job-link" target="_blank">Voir l'offre →</a>
         </div>
 
         <div class="footer">
-            <p>Développé avec ❤️ par Théo Collin | Propulsé par Gemini Pro AI</p>
+            <p>Développé avec ❤️ par Théo Collin | Multi-source scraping + Gemini Pro AI</p>
         </div>
     </div>
 </body>
