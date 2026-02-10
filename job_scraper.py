@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-LinkedIn Job Tracker - Multi-source version
-Scrapes from: LinkedIn Jobs, Welcome to the Jungle, Indeed, and Google (LinkedIn posts)
+LinkedIn Job Tracker - Enhanced Multi-source version
+More robust scraping with better error handling
 Author: Théo Collin
 """
 
@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 from typing import List, Dict
 import google.generativeai as genai
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, urlencode
 
 class MultiSourceJobTracker:
     def __init__(self):
@@ -30,7 +30,7 @@ class MultiSourceJobTracker:
             self.config = json.load(f)
     
     # ============================================
-    # LINKEDIN JOBS SCRAPING
+    # LINKEDIN JOBS SCRAPING (Working)
     # ============================================
     
     def scrape_linkedin_jobs(self) -> List[Dict]:
@@ -61,12 +61,12 @@ class MultiSourceJobTracker:
                         job['source'] = 'LinkedIn Jobs'
                     all_jobs.extend(jobs)
                     
-                    time.sleep(2)  # Rate limiting
+                    time.sleep(2)
                     
                 except Exception as e:
-                    print(f"   ⚠️ Error scraping LinkedIn: {e}")
+                    print(f"   ⚠️ Error with {keyword} in {location}: {e}")
         
-        print(f"   Found {len(all_jobs)} jobs from LinkedIn")
+        print(f"   ✅ Found {len(all_jobs)} jobs from LinkedIn")
         return all_jobs
     
     def parse_linkedin_html(self, html_content: str) -> List[Dict]:
@@ -122,248 +122,242 @@ class MultiSourceJobTracker:
         return jobs
     
     # ============================================
-    # WELCOME TO THE JUNGLE SCRAPING
+    # WELCOME TO THE JUNGLE - Alternative approach
     # ============================================
     
-    def scrape_wttj(self) -> List[Dict]:
-        """Scrape jobs from Welcome to the Jungle"""
+    def scrape_wttj_simple(self) -> List[Dict]:
+        """Scrape WTTJ using simple URL approach"""
         print("\n🟢 Scraping Welcome to the Jungle...")
         all_jobs = []
-        base_url = "https://www.welcometothejungle.com/api/graphql"
         
-        # WTTJ uses GraphQL API
-        for location in ['Paris', 'Lille', 'Lyon']:  # Simplified locations
-            for keyword in self.config['keywords']:
+        # WTTJ simple search URLs
+        locations = ['paris', 'lille', 'lyon']
+        
+        for location in locations:
+            for keyword in ['alternance', 'apprentissage']:
                 try:
-                    query = f"{keyword} alternance"
-                    
-                    # GraphQL query for WTTJ
-                    payload = {
-                        "query": """
-                        query JobSearch($query: String!, $page: Int) {
-                          jobs(query: $query, page: $page) {
-                            nodes {
-                              id
-                              name
-                              slug
-                              contractType
-                              office {
-                                name
-                                city
-                              }
-                              organization {
-                                name
-                                slug
-                              }
-                              publishedAt
-                            }
-                          }
-                        }
-                        """,
-                        "variables": {
-                            "query": query,
-                            "page": 1
-                        }
-                    }
+                    # Direct URL to WTTJ search
+                    url = f"https://www.welcometothejungle.com/fr/jobs?query={keyword}&page=1&aroundQuery={location}"
                     
                     headers = {
-                        'Content-Type': 'application/json',
-                        'User-Agent': 'Mozilla/5.0'
+                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                        'Accept': 'text/html,application/xhtml+xml'
                     }
                     
-                    response = requests.post(base_url, json=payload, headers=headers, timeout=10)
+                    response = requests.get(url, headers=headers, timeout=15)
                     
                     if response.status_code == 200:
-                        data = response.json()
-                        jobs_data = data.get('data', {}).get('jobs', {}).get('nodes', [])
-                        
-                        for job in jobs_data:
-                            job_obj = {
-                                'id': f"wttj_{job['id']}",
-                                'title': job.get('name', ''),
-                                'company': job.get('organization', {}).get('name', ''),
-                                'location': job.get('office', {}).get('city', ''),
-                                'link': f"https://www.welcometothejungle.com/fr/companies/{job.get('organization', {}).get('slug', '')}/jobs/{job.get('slug', '')}",
-                                'posted_date': job.get('publishedAt', ''),
-                                'description': '',
-                                'source': 'Welcome to the Jungle'
-                            }
-                            
-                            if job_obj['title'] and job_obj['company']:
-                                all_jobs.append(job_obj)
+                        jobs = self.parse_wttj_html(response.text, location)
+                        for job in jobs:
+                            job['source'] = 'Welcome to the Jungle'
+                        all_jobs.extend(jobs)
+                        print(f"   Found {len(jobs)} jobs for {keyword} in {location}")
                     
-                    time.sleep(2)
+                    time.sleep(3)
                     
                 except Exception as e:
-                    print(f"   ⚠️ Error scraping WTTJ: {e}")
+                    print(f"   ⚠️ Error with WTTJ {keyword}/{location}: {e}")
         
-        print(f"   Found {len(all_jobs)} jobs from WTTJ")
+        print(f"   ✅ Total WTTJ: {len(all_jobs)} jobs")
         return all_jobs
     
-    # ============================================
-    # INDEED SCRAPING
-    # ============================================
-    
-    def scrape_indeed(self) -> List[Dict]:
-        """Scrape jobs from Indeed"""
-        print("\n🔴 Scraping Indeed...")
-        all_jobs = []
-        base_url = "https://fr.indeed.com/jobs"
-        
-        for location in ['Paris', 'Lille']:
-            for keyword in self.config['keywords']:
-                try:
-                    params = {
-                        'q': f"{keyword} alternance",
-                        'l': location,
-                        'fromage': '30',  # Last 30 days
-                        'sort': 'date'
-                    }
-                    
-                    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
-                    response = requests.get(base_url, params=params, headers=headers, timeout=10)
-                    response.raise_for_status()
-                    
-                    jobs = self.parse_indeed_html(response.text)
-                    for job in jobs:
-                        job['source'] = 'Indeed'
-                    all_jobs.extend(jobs)
-                    
-                    time.sleep(2)
-                    
-                except Exception as e:
-                    print(f"   ⚠️ Error scraping Indeed: {e}")
-        
-        print(f"   Found {len(all_jobs)} jobs from Indeed")
-        return all_jobs
-    
-    def parse_indeed_html(self, html_content: str) -> List[Dict]:
-        """Parse Indeed job listings from HTML"""
-        from bs4 import BeautifulSoup
-        
-        soup = BeautifulSoup(html_content, 'html.parser')
-        jobs = []
-        
-        # Indeed uses different selectors
-        job_cards = soup.find_all('div', class_='job_seen_beacon')
-        
-        for card in job_cards:
-            try:
-                job_data = {
-                    'id': '',
-                    'title': '',
-                    'company': '',
-                    'location': '',
-                    'link': '',
-                    'posted_date': '',
-                    'description': ''
-                }
-                
-                # Extract job ID
-                job_key = card.get('data-jk', '')
-                if job_key:
-                    job_data['id'] = f"indeed_{job_key}"
-                
-                # Extract title
-                title_elem = card.find('h2', class_='jobTitle')
-                if title_elem:
-                    title_link = title_elem.find('a')
-                    if title_link:
-                        job_data['title'] = title_link.get('title', '') or title_link.text.strip()
-                        job_data['link'] = 'https://fr.indeed.com' + title_link.get('href', '')
-                
-                # Extract company
-                company_elem = card.find('span', {'data-testid': 'company-name'})
-                if company_elem:
-                    job_data['company'] = company_elem.text.strip()
-                
-                # Extract location
-                location_elem = card.find('div', {'data-testid': 'text-location'})
-                if location_elem:
-                    job_data['location'] = location_elem.text.strip()
-                
-                if job_data['id'] and job_data['title'] and job_data['company']:
-                    jobs.append(job_data)
-                    
-            except Exception as e:
-                continue
-        
-        return jobs
-    
-    # ============================================
-    # GOOGLE SEARCH FOR LINKEDIN POSTS
-    # ============================================
-    
-    def scrape_google_linkedin_posts(self) -> List[Dict]:
-        """Search Google for LinkedIn posts containing job offers"""
-        print("\n🟡 Searching Google for LinkedIn posts...")
-        all_jobs = []
-        
-        for keyword in self.config['keywords']:
-            for location in ['Paris', 'Lille']:
-                try:
-                    # Google search query
-                    query = f'site:linkedin.com/posts "{keyword}" "alternance" "{location}"'
-                    encoded_query = quote_plus(query)
-                    
-                    url = f"https://www.google.com/search?q={encoded_query}&num=20"
-                    
-                    headers = {
-                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-                    }
-                    
-                    response = requests.get(url, headers=headers, timeout=10)
-                    response.raise_for_status()
-                    
-                    jobs = self.parse_google_results(response.text, keyword, location)
-                    for job in jobs:
-                        job['source'] = 'LinkedIn Post (via Google)'
-                    all_jobs.extend(jobs)
-                    
-                    time.sleep(3)  # Be nice to Google
-                    
-                except Exception as e:
-                    print(f"   ⚠️ Error searching Google: {e}")
-        
-        print(f"   Found {len(all_jobs)} LinkedIn posts from Google")
-        return all_jobs
-    
-    def parse_google_results(self, html_content: str, keyword: str, location: str) -> List[Dict]:
-        """Parse Google search results for LinkedIn posts"""
+    def parse_wttj_html(self, html_content: str, location: str) -> List[Dict]:
+        """Parse WTTJ HTML"""
         from bs4 import BeautifulSoup
         import hashlib
         
         soup = BeautifulSoup(html_content, 'html.parser')
         jobs = []
         
-        # Find all search result divs
+        # WTTJ uses different selectors - look for job cards
+        job_elements = soup.find_all('a', href=lambda x: x and '/fr/companies/' in x and '/jobs/' in x)
+        
+        for elem in job_elements[:20]:  # Limit to first 20
+            try:
+                link = elem.get('href', '')
+                if not link.startswith('http'):
+                    link = 'https://www.welcometothejungle.com' + link
+                
+                # Extract info from the card
+                title_elem = elem.find('h3') or elem.find('h2')
+                title = title_elem.text.strip() if title_elem else 'Titre non disponible'
+                
+                # Generate ID from URL
+                job_id = hashlib.md5(link.encode()).hexdigest()[:12]
+                
+                job_data = {
+                    'id': f"wttj_{job_id}",
+                    'title': title,
+                    'company': 'À identifier',  # Will be analyzed by AI
+                    'location': location.capitalize(),
+                    'link': link,
+                    'posted_date': '',
+                    'description': ''
+                }
+                
+                jobs.append(job_data)
+                
+            except Exception as e:
+                continue
+        
+        return jobs
+    
+    # ============================================
+    # INDEED - Simplified approach
+    # ============================================
+    
+    def scrape_indeed_simple(self) -> List[Dict]:
+        """Scrape Indeed using RSS feed (more reliable)"""
+        print("\n🔴 Scraping Indeed...")
+        all_jobs = []
+        
+        locations = ['Paris', 'Lille']
+        
+        for location in locations:
+            for keyword in ['alternance operations', 'alternance supply chain', 'alternance']:
+                try:
+                    # Indeed RSS feed (more stable than HTML scraping)
+                    params = {
+                        'q': keyword,
+                        'l': location,
+                        'sort': 'date',
+                        'fromage': '30'
+                    }
+                    
+                    # Use the XML/RSS endpoint
+                    url = f"https://fr.indeed.com/rss?{urlencode(params)}"
+                    
+                    headers = {'User-Agent': 'Mozilla/5.0'}
+                    response = requests.get(url, headers=headers, timeout=10)
+                    
+                    if response.status_code == 200:
+                        jobs = self.parse_indeed_rss(response.text, location)
+                        for job in jobs:
+                            job['source'] = 'Indeed'
+                        all_jobs.extend(jobs)
+                        print(f"   Found {len(jobs)} jobs for {keyword} in {location}")
+                    
+                    time.sleep(2)
+                    
+                except Exception as e:
+                    print(f"   ⚠️ Error with Indeed {keyword}/{location}: {e}")
+        
+        print(f"   ✅ Total Indeed: {len(all_jobs)} jobs")
+        return all_jobs
+    
+    def parse_indeed_rss(self, xml_content: str, location: str) -> List[Dict]:
+        """Parse Indeed RSS feed"""
+        from bs4 import BeautifulSoup
+        import hashlib
+        
+        soup = BeautifulSoup(xml_content, 'xml')
+        jobs = []
+        
+        items = soup.find_all('item')
+        
+        for item in items[:20]:  # Limit to 20
+            try:
+                title = item.find('title').text if item.find('title') else ''
+                link = item.find('link').text if item.find('link') else ''
+                description = item.find('description').text if item.find('description') else ''
+                pub_date = item.find('pubDate').text if item.find('pubDate') else ''
+                
+                # Extract company from title (format: "Title - Company")
+                parts = title.split(' - ')
+                job_title = parts[0] if parts else title
+                company = parts[1] if len(parts) > 1 else 'À identifier'
+                
+                job_id = hashlib.md5(link.encode()).hexdigest()[:12]
+                
+                job_data = {
+                    'id': f"indeed_{job_id}",
+                    'title': job_title,
+                    'company': company,
+                    'location': location,
+                    'link': link,
+                    'posted_date': pub_date,
+                    'description': description[:500]  # Truncate
+                }
+                
+                jobs.append(job_data)
+                
+            except Exception as e:
+                continue
+        
+        return jobs
+    
+    # ============================================
+    # LINKEDIN POSTS via Google - Conservative approach
+    # ============================================
+    
+    def scrape_linkedin_posts_google(self) -> List[Dict]:
+        """Search for LinkedIn posts via Google (limited to avoid blocking)"""
+        print("\n🟡 Searching LinkedIn posts via Google...")
+        all_jobs = []
+        
+        # Only do a few searches to avoid Google blocking
+        searches = [
+            'site:linkedin.com/posts "alternance" "operations" "Paris"',
+            'site:linkedin.com/posts "alternance" "supply chain" "Paris"',
+            'site:linkedin.com/feed/update "alternance" "operations"'
+        ]
+        
+        for query in searches:
+            try:
+                encoded_query = quote_plus(query)
+                url = f"https://www.google.com/search?q={encoded_query}&num=10"
+                
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+                }
+                
+                response = requests.get(url, headers=headers, timeout=10)
+                
+                if response.status_code == 200:
+                    jobs = self.parse_google_results(response.text)
+                    for job in jobs:
+                        job['source'] = 'LinkedIn Post (via Google)'
+                    all_jobs.extend(jobs)
+                
+                time.sleep(5)  # Long delay to be respectful
+                
+            except Exception as e:
+                print(f"   ⚠️ Error with Google search: {e}")
+        
+        print(f"   ✅ Total LinkedIn posts: {len(all_jobs)}")
+        return all_jobs
+    
+    def parse_google_results(self, html_content: str) -> List[Dict]:
+        """Parse Google search results"""
+        from bs4 import BeautifulSoup
+        import hashlib
+        
+        soup = BeautifulSoup(html_content, 'html.parser')
+        jobs = []
+        
         results = soup.find_all('div', class_='g')
         
-        for result in results:
+        for result in results[:5]:  # Only first 5
             try:
-                # Extract title and link
                 title_elem = result.find('h3')
                 link_elem = result.find('a')
                 
                 if title_elem and link_elem:
                     link = link_elem.get('href', '')
                     
-                    # Only process LinkedIn post URLs
                     if 'linkedin.com/posts/' in link or 'linkedin.com/feed/update/' in link:
                         title = title_elem.text.strip()
                         
-                        # Extract snippet
                         snippet_elem = result.find('div', class_='VwiC3b')
                         snippet = snippet_elem.text.strip() if snippet_elem else ''
                         
-                        # Generate unique ID from URL
                         job_id = hashlib.md5(link.encode()).hexdigest()[:12]
                         
                         job_data = {
                             'id': f"linkedin_post_{job_id}",
                             'title': title,
-                            'company': 'À identifier',  # Will be analyzed by AI
-                            'location': location,
+                            'company': 'À identifier',
+                            'location': 'Paris',
                             'link': link,
                             'posted_date': '',
                             'description': snippet
@@ -377,7 +371,7 @@ class MultiSourceJobTracker:
         return jobs
     
     # ============================================
-    # AI ANALYSIS
+    # AI ANALYSIS (unchanged)
     # ============================================
     
     def analyze_job_with_ai(self, job: Dict) -> Dict:
@@ -431,7 +425,6 @@ RETOURNE UNIQUEMENT un JSON avec ce format exact :
             response = self.model.generate_content(prompt)
             result_text = response.text.strip()
             
-            # Extract JSON from response
             if "```json" in result_text:
                 result_text = result_text.split("```json")[1].split("```")[0].strip()
             elif "```" in result_text:
@@ -444,7 +437,7 @@ RETOURNE UNIQUEMENT un JSON avec ce format exact :
             return analysis
             
         except Exception as e:
-            print(f"   ⚠️ Error analyzing job {job['id']}: {e}")
+            print(f"   ⚠️ Error analyzing: {e}")
             return {
                 "score": 0,
                 "verdict": "Erreur d'analyse",
@@ -476,67 +469,80 @@ RETOURNE UNIQUEMENT un JSON avec ce format exact :
     
     def run(self):
         """Main execution flow"""
-        print("🚀 Starting Multi-Source Job Tracker...")
+        print("🚀 Starting Multi-Source Job Tracker (Enhanced)...")
         print(f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
-        # Load existing jobs
         all_jobs_db = self.load_existing_jobs()
         new_jobs_count = 0
         
-        # Scrape from all sources
+        # Scrape from all sources with error handling
         all_scraped_jobs = []
         
-        all_scraped_jobs.extend(self.scrape_linkedin_jobs())
-        all_scraped_jobs.extend(self.scrape_wttj())
-        all_scraped_jobs.extend(self.scrape_indeed())
-        all_scraped_jobs.extend(self.scrape_google_linkedin_posts())
+        # LinkedIn Jobs (most reliable)
+        try:
+            all_scraped_jobs.extend(self.scrape_linkedin_jobs())
+        except Exception as e:
+            print(f"❌ LinkedIn scraping failed: {e}")
+        
+        # WTTJ (try but don't fail if it doesn't work)
+        try:
+            all_scraped_jobs.extend(self.scrape_wttj_simple())
+        except Exception as e:
+            print(f"⚠️  WTTJ skipped: {e}")
+        
+        # Indeed (try RSS feed)
+        try:
+            all_scraped_jobs.extend(self.scrape_indeed_simple())
+        except Exception as e:
+            print(f"⚠️  Indeed skipped: {e}")
+        
+        # Google/LinkedIn posts (conservative)
+        try:
+            all_scraped_jobs.extend(self.scrape_linkedin_posts_google())
+        except Exception as e:
+            print(f"⚠️  Google search skipped: {e}")
         
         print(f"\n📊 Total jobs scraped: {len(all_scraped_jobs)}")
         
+        # Deduplicate by ID
+        unique_jobs = {job['id']: job for job in all_scraped_jobs}
+        all_scraped_jobs = list(unique_jobs.values())
+        print(f"📊 After deduplication: {len(all_scraped_jobs)} unique jobs")
+        
         # Process each job
-        for job in all_scraped_jobs:
+        for i, job in enumerate(all_scraped_jobs, 1):
             job_id = job['id']
             
-            # Skip if already analyzed
             if job_id in all_jobs_db:
                 continue
             
-            print(f"\n🆕 New: {job['title']} at {job['company']} ({job['source']})")
+            print(f"\n🆕 [{i}/{len(all_scraped_jobs)}] {job['title'][:50]}... at {job['company']} ({job['source']})")
             print(f"   🤖 Analyzing...")
             
-            # Analyze with AI
             analysis = self.analyze_job_with_ai(job)
-            
-            # Combine job data with analysis
             job['analysis'] = analysis
             job['found_at'] = datetime.now().isoformat()
             
-            # Add to database
             all_jobs_db[job_id] = job
             new_jobs_count += 1
             
             print(f"   ✅ Score: {analysis['score']}/10 - {analysis['verdict']}")
             
-            # Rate limiting
             time.sleep(2)
         
-        # Save updated database
         self.save_jobs(all_jobs_db)
         
         print(f"\n✨ Done! Found {new_jobs_count} new jobs")
         print(f"📁 Total jobs in database: {len(all_jobs_db)}")
         
-        # Generate report
         self.generate_report(all_jobs_db)
     
     def generate_report(self, all_jobs: Dict):
-        """Generate HTML report of all jobs"""
+        """Generate HTML report - same as before"""
         
-        # Sort jobs by score
         jobs_list = list(all_jobs.values())
         jobs_list.sort(key=lambda x: x.get('analysis', {}).get('score', 0), reverse=True)
         
-        # Get all jobs (changed from >= 7 to show everything)
         top_jobs = jobs_list
         
         html = f"""
